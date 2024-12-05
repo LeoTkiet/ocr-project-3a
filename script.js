@@ -29,4 +29,13 @@ document.getElementById("processButton").addEventListener("click", () => {
     };
 
     reader.readAsDataURL(file);
+
+    const downloadResult = () => {
+        const blob = new Blob([resultElement.textContent], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'ocr-result.txt';
+        link.click();
+    };
+
 });
