@@ -1,8 +1,55 @@
-﻿// Hàm giả lập sử dụng YAKE (hoặc có thể thay bằng API thật)
+﻿// Danh sách các stopwords tiếng Anh và tiếng Việt
+const stopwords = [
+  "a", "an", "the", "and", "or", "but", "if", "then", "for", "nor", "on", "in", "at", "by", "with", 
+  "about", "as", "from", "to", "for", "over", "under", "above", "below", "between", "this", "that", 
+  "these", "those", "is", "am", "are", "was", "were", "be", "been", "being", "have", "has", "had", 
+  "having", "do", "does", "did", "doing", "of", "with", "it", "they", "you", "he", "she", "we", "i", 
+  "me", "my", "your", "his", "her", "its", "their", "our", "theirs", "ours",
+  
+  // Stopwords tiếng Việt
+  "bị", "bởi", "cả", "các", "cái", "cần", "càng", "chỉ", "chiếc", "cho", "chứ", "chưa", "chuyện", "có",
+  "có_thể", "cứ", "của", "cùng", "cũng", "đã", "đang", "đây", "để", "đến_nỗi", "đều", "điều", "do", "đó",
+  "được", "dưới", "gì", "khi", "không", "là", "lại", "lên", "lúc", "mà", "mỗi", "một_cách", "này", "nên",
+  "nếu", "ngay", "nhiều", "như", "nhưng", "những", "nơi", "nữa", "phải", "qua", "ra", "rằng", "rất", "rồi",
+  "sau", "sẽ", "so", "sự", "tại", "theo", "thì", "trên", "trước", "từ", "từng", "và", "vẫn", "vào", "vậy",
+  "vì", "việc", "với", "vừa"
+
+];
+
+// Giả lập hàm API YAKE 
 async function extractKeywordsWithYake(text) {
-  // Giả lập trích xuất từ khóa từ văn bản (bạn cần sử dụng thư viện hoặc API thực tế ở đây)
-  const keywords = text.split(' ').filter(word => word.length > 3); // Giả lập chỉ lấy các từ dài hơn 3 ký tự
-  return keywords.slice(0, 10); // Lấy tối đa 10 từ khóa
+  return new Promise((resolve, reject) => {
+    // Giả lập độ trễ mạng
+    setTimeout(() => {
+      // Tách các từ trong văn bản, chuyển về chữ thường và loại bỏ các stopwords
+      const words = text
+        .toLowerCase() // Chuyển tất cả từ về chữ thường
+        .split(/\s+/) // Tách văn bản thành các từ
+        .filter(word => word.length > 2 && !stopwords.includes(word)) // Loại bỏ stopwords và từ ngắn hơn 3 ký tự
+
+      // Tính tần suất xuất hiện của từng từ
+      const wordCounts = {};
+      words.forEach(word => {
+        wordCounts[word] = (wordCounts[word] || 0) + 1;
+      });
+
+      // Chuyển từ đối tượng đếm thành mảng các từ khóa và tần suất của chúng
+      const keywordArray = Object.keys(wordCounts).map(word => ({
+        word: word,
+        count: wordCounts[word]
+      }));
+
+      // Sắp xếp từ khóa theo tần suất xuất hiện (giảm dần)
+      keywordArray.sort((a, b) => b.count - a.count);
+
+      // Lấy số lượng từ khóa dựa trên số lượng từ trong văn bản
+      const numKeywords = Math.min(10, Math.ceil(words.length / 2));
+      const topKeywords = keywordArray.slice(0, numKeywords);
+
+      // Giả lập thành công trả dữ liệu
+      resolve(topKeywords);
+    }, 1500); // Thời gian giả lập trễ 1.5 giây
+  });
 }
 
 // Hàm xử lý hình ảnh được tải lên
@@ -45,11 +92,12 @@ async function processImageFromFile(file) {
 
       // Trích xuất từ khóa sử dụng phương pháp YAKE
       const keywords = await extractKeywordsWithYake(text);
-      keywordsList.innerHTML = "";
+      keywordsList.innerHTML = "";  // Làm sạch danh sách cũ
 
+      // Hiển thị từ khóa
       keywords.forEach((keyword) => {
           const listItem = document.createElement("li");
-          listItem.textContent = keyword;
+          listItem.textContent = keyword.word; // Chỉ hiển thị từ khóa
           keywordsList.appendChild(listItem);
       });
 
