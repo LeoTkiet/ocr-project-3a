@@ -1,102 +1,126 @@
-﻿// Function to process the image when it's uploaded, pasted, or dropped
-function processImageFromFile(file) {
-    const loadingMessage = document.getElementById("loadingMessage");
-    const resultElement = document.getElementById("result");
-    const extractedTextPrompt = document.getElementById("extractedTextPrompt");
-    const downloadButton = document.getElementById("downloadButton");
-    const imagePreview = document.getElementById("imagePreview");
-  
-    // Show loading message and clear previous results
-    loadingMessage.style.display = "block";
-    resultElement.textContent = "";
-    extractedTextPrompt.style.display = "none"; // Hide text prompt initially
-  
-    // Use Tesseract.js to recognize text from the image
-    Tesseract.recognize(
-      file, // The image file to process
-      'eng+vie', // OCR languages (English + Vietnamese)
-      {
-        logger: (info) => console.log(info) // Optional: log OCR progress
-      }
-    ).then(({ data: { text } }) => {
-      // Display the extracted text and show the text prompt
-      resultElement.textContent = text;
-      extractedTextPrompt.style.display = "block"; // Show the extracted text section
-      downloadButton.style.display = "block"; // Show the download button
-      loadingMessage.style.display = "none"; // Hide loading message
-    }).catch((error) => {
-      // If there's an error, show an error message
-      resultElement.textContent = "Error processing image: " + error.message;
-      loadingMessage.style.display = "none"; // Hide loading message
-    });
+﻿// Hàm giả lập sử dụng YAKE (hoặc có thể thay bằng API thật)
+async function extractKeywordsWithYake(text) {
+  // Giả lập trích xuất từ khóa từ văn bản (bạn cần sử dụng thư viện hoặc API thực tế ở đây)
+  const keywords = text.split(' ').filter(word => word.length > 3); // Giả lập chỉ lấy các từ dài hơn 3 ký tự
+  return keywords.slice(0, 10); // Lấy tối đa 10 từ khóa
+}
+
+// Hàm xử lý hình ảnh được tải lên
+async function processImageFromFile(file) {
+  const loadingMessage = document.getElementById("loadingMessage");
+  const resultElement = document.getElementById("result");
+  const extractedTextPrompt = document.getElementById("extractedTextPrompt");
+  const downloadButton = document.getElementById("downloadButton");
+  const imagePreview = document.getElementById("imagePreview");
+  const keywordsPrompt = document.getElementById("keywordsPrompt");
+  const keywordsList = document.getElementById("keywordsList");
+  const searchOptionsPrompt = document.getElementById("searchOptionsPrompt");
+
+  // Hiển thị thông báo đang xử lý và xóa kết quả cũ
+  loadingMessage.style.display = "block";
+  resultElement.textContent = "";
+  extractedTextPrompt.style.display = "none";
+  keywordsPrompt.style.display = "none";
+  searchOptionsPrompt.style.display = "none";
+
+  // Hiển thị ảnh preview
+  const reader = new FileReader();
+  reader.onloadend = function() {
+      imagePreview.src = reader.result;
+      imagePreview.style.display = "block";
   }
-  
-  // Listen for the "paste" event when the user pastes an image onto the page
-  document.addEventListener("paste", (event) => {
-    const fileInput = document.getElementById("fileInput");
-    const loadingMessage = document.getElementById("loadingMessage");
-    const resultElement = document.getElementById("result");
-    const extractedTextPrompt = document.getElementById("extractedTextPrompt");
-    const downloadButton = document.getElementById("downloadButton");
-    const imagePreview = document.getElementById("imagePreview");
-  
-    // Get the items from the clipboard
-    const clipboardItems = event.clipboardData.items;
-  
-    // Check for image content in the clipboard
-    for (let i = 0; i < clipboardItems.length; i++) {
-      const item = clipboardItems[i];
-  
+  reader.readAsDataURL(file);
+
+  // Sử dụng Tesseract.js để nhận dạng văn bản từ hình ảnh
+  Tesseract.recognize(
+      file,
+      'eng+vie',  // Nhận diện tiếng Anh và tiếng Việt
+      { logger: (info) => console.log(info) }
+  ).then(async ({ data: { text } }) => {
+      // Hiển thị văn bản đã trích xuất
+      resultElement.textContent = text;
+      extractedTextPrompt.style.display = "block";
+      downloadButton.style.display = "block";
+      loadingMessage.style.display = "none";
+
+      // Trích xuất từ khóa sử dụng phương pháp YAKE
+      const keywords = await extractKeywordsWithYake(text);
+      keywordsList.innerHTML = "";
+
+      keywords.forEach((keyword) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = keyword;
+          keywordsList.appendChild(listItem);
+      });
+
+      keywordsPrompt.style.display = "block";
+      searchOptionsPrompt.style.display = "block";
+  }).catch((error) => {
+      // Xử lý lỗi
+      resultElement.textContent = "Lỗi xử lý hình ảnh: " + error.message;
+      loadingMessage.style.display = "none";
+  });
+}
+
+// Thêm sự kiện cho nút tìm kiếm
+document.getElementById("searchButton").addEventListener("click", () => {
+  const selectedEngine = document.getElementById("searchEngine").value;
+  const keywords = Array.from(document.getElementById("keywordsList").children)
+      .map(li => li.textContent)
+      .join(" ");
+
+  let searchUrl;
+  if (selectedEngine === "google") {
+      searchUrl = `https://www.google.com/search?q=${encodeURIComponent(keywords)}`;
+  } else {
+      searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(keywords)}`;
+  }
+
+  // Mở tab mới với kết quả tìm kiếm
+  window.open(searchUrl, '_blank');
+});
+
+// Tải về văn bản đã trích xuất
+document.getElementById("downloadButton").addEventListener("click", () => {
+  const resultText = document.getElementById("result").textContent;
+  const blob = new Blob([resultText], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "extracted-text.txt";
+  link.click();
+});
+
+// Xử lý sự kiện tải file
+document.getElementById("fileInput").addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (file) {
+      processImageFromFile(file);
+  }
+});
+
+// Xử lý kéo và thả file
+document.getElementById("dropArea").addEventListener("dragover", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+});
+
+document.getElementById("dropArea").addEventListener("drop", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  const file = event.dataTransfer.files[0];
+  if (file) {
+      processImageFromFile(file);
+  }
+});
+
+// Xử lý sự kiện dán hình ảnh từ clipboard
+document.addEventListener("paste", function(event) {
+  const items = event.clipboardData.items;
+  for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       if (item.type.indexOf("image") !== -1) {
-        const blob = item.getAsFile(); // Get the image as a file
-        const url = URL.createObjectURL(blob); // Create an object URL for the image
-  
-        // Show the image preview and start processing
-        imagePreview.src = url;
-        imagePreview.style.display = "block"; // Display the image
-        processImageFromFile(blob); // Process the image with OCR
-        break; // Exit the loop once an image is found
+          const file = item.getAsFile();
+          processImageFromFile(file);
       }
-    }
-  });
-  
-  // Listen for the "drop" event for dragging and dropping an image
-  document.getElementById("dropArea").addEventListener("drop", (event) => {
-    event.preventDefault(); // Prevent the default behavior of the drop
-    const files = event.dataTransfer.files;
-  
-    // Check if any file is dropped and if it's an image
-    if (files.length > 0 && files[0].type.startsWith("image/")) {
-      const file = files[0];
-      const reader = new FileReader();
-  
-      reader.onload = (e) => {
-        // Show the image preview and start processing
-        const imagePreview = document.getElementById("imagePreview");
-        imagePreview.src = e.target.result;
-        imagePreview.style.display = "block"; // Display the image
-        processImageFromFile(file); // Process the image with OCR
-      };
-  
-      reader.readAsDataURL(file); // Read the image file as a data URL
-    } else {
-      alert("Please drop an image file.");
-    }
-  });
-  
-  // Allow for dragging over the drop area
-  document.getElementById("dropArea").addEventListener("dragover", (event) => {
-    event.preventDefault(); // Allow the drop
-    event.dataTransfer.dropEffect = "copy"; // Indicate a copy operation
-  });
-  
-  // Function to download the extracted text as a .txt file
-  document.getElementById("downloadButton").addEventListener("click", () => {
-    const resultText = document.getElementById("result").textContent;
-    const blob = new Blob([resultText], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "extracted-text.txt"; // Set the filename for the downloaded text file
-    link.click(); // Trigger the download
-  });
-  
+  }
+});
