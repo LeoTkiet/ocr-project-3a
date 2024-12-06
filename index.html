@@ -1,99 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OCR Application - Image to Text</title>
-    <link rel="stylesheet" href="style.css">
-    
+    <link rel="stylesheet" href="style.css" />
+
     <!-- Tesseract.js for OCR -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2"></script>
-</head>
-<body>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4"></script>
+  </head>
+  <body>
     <div class="container">
-        <h1>Image to Text OCR with Search Comparison</h1>
+      <h1>Image to Text OCR with Search Comparison</h1>
 
-        <!-- File Input and Drag Drop Area -->
-        <div class="file-upload">
-            <input type="file" id="fileInput" accept="image/*">
-            <div id="dropArea">
-                <p>Drag and drop an image here or click to select</p>
-            </div>
+      <!-- File Input and Drag Drop Area -->
+      <div class="file-upload">
+        <input type="file" id="fileInput" accept="image/*" />
+        <div id="dropArea">
+          <p>Drag and drop an image here or click to select</p>
         </div>
+      </div>
 
-        <p id="loadingMessage" style="display: none;">Processing...</p>
+      <p id="loadingMessage" style="display: none">Processing...</p>
 
-        <!-- Image Preview Section -->
-        <div class="image-preview-section">
-            <h2>Image Preview</h2>
-            <img id="imagePreview" style="max-width: 100%; display: none;" alt="Image Preview" />
-        </div>
+      <!-- Image Preview Section -->
+      <div class="image-preview-section">
+        <h2>Image Preview</h2>
+        <img
+          id="imagePreview"
+          style="max-width: 100%; display: none"
+          alt="Image Preview"
+        />
+      </div>
 
-        <!-- Extracted Text Section -->
-        <div id="extractedTextPrompt" style="display: none;">
-            <h2>Extracted Text:</h2>
-            <pre id="result"></pre>
-            <button id="downloadButton" style="display: none;">Download Text</button>
-        </div>
+      <!-- Extracted Text Section -->
+      <div id="extractedTextPrompt" style="display: none">
+        <h2>Extracted Text:</h2>
+        <pre id="result"></pre>
+        <button id="downloadButton" style="display: none">Download Text</button>
+        <button id="copyButton" style="display: none">Copy Text</button>
+      </div>
 
-        <!-- Keywords Section -->
-        <div id="keywordsPrompt" style="display: none;">
-            <h2>Keywords Extracted:</h2>
-            <ul id="keywordsList"></ul>
-        </div>
+      <!-- Keywords Section -->
+      <div id="keywordsPrompt" style="display: none">
+        <h2>Keywords Extracted:</h2>
+        <ul id="keywordsList"></ul>
+      </div>
 
-        <!-- Search Options -->
-        <div id="searchOptionsPrompt" style="display: none;">
-            <h2>Choose a Search Engine:</h2>
-            <select id="searchEngine">
-                <option value="google">Google</option>
-                <option value="yahoo">Yahoo</option>
-            </select>
-            <button id="searchButton">Search</button>
-        </div>
+      <!-- Search Options -->
+      <div id="searchOptionsPrompt" style="display: none">
+        <h2>Choose a Search Engine:</h2>
+        <select id="searchEngine">
+          <option value="google">Google</option>
+          <option value="yahoo">Yahoo</option>
+        </select>
+        <button id="searchButton">Search</button>
+      </div>
 
-        <!-- Search Comparison Section -->
-        <div id="searchComparison" style="display: none;">
-            <h2>Search Comparison (Yahoo vs Google)</h2>
-            <table id="comparisonTable">
-                <thead>
-                    <tr>
-                        <th>Criteria</th>
-                        <th>Google</th>
-                        <th>Yahoo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Speed</td>
-                        <td id="googleSpeed"></td>
-                        <td id="yahooSpeed"></td>
-                    </tr>
-                    <tr>
-                        <td>Relevance</td>
-                        <td id="googleRelevance"></td>
-                        <td id="yahooRelevance"></td>
-                    </tr>
-                    <tr>
-                        <td>Result Count</td>
-                        <td id="googleCount"></td>
-                        <td id="yahooCount"></td>
-                    </tr>
-                    <tr>
-                        <td>Ads Presence</td>
-                        <td id="googleAds"></td>
-                        <td id="yahooAds"></td>
-                    </tr>
-                    <tr>
-                        <td>Usability</td>
-                        <td id="googleUsability"></td>
-                        <td id="yahooUsability"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+      <!-- Search Comparison Section -->
+      <div id="searchComparison" style="display: none">
+        <h2>Search Comparison (Yahoo vs Google)</h2>
+        <table id="comparisonTable">
+          <thead>
+            <tr>
+              <th>Criteria</th>
+              <th>Google</th>
+              <th>Yahoo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Speed</td>
+              <td id="googleSpeed"></td>
+              <td id="yahooSpeed"></td>
+            </tr>
+            <tr>
+              <td>Relevance</td>
+              <td id="googleRelevance"></td>
+              <td id="yahooRelevance"></td>
+            </tr>
+            <tr>
+              <td>Result Count</td>
+              <td id="googleCount"></td>
+              <td id="yahooCount"></td>
+            </tr>
+            <tr>
+              <td>Ads Presence</td>
+              <td id="googleAds"></td>
+              <td id="yahooAds"></td>
+            </tr>
+            <tr>
+              <td>Usability</td>
+              <td id="googleUsability"></td>
+              <td id="yahooUsability"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
