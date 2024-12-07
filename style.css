@@ -1,4 +1,5 @@
-body {
+body 
+{
   font-family: 'Arial', sans-serif;
   background-color: #f4f4f4;
   margin: 0;
@@ -6,7 +7,8 @@ body {
   line-height: 1.6;
 }
 
-.container {
+.container 
+{
   max-width: 800px;
   margin: 0 auto;
   background-color: #ffffff;
@@ -15,24 +17,28 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+h1 
+{
   color: #333;
   text-align: center;
   margin-bottom: 25px;
 }
 
-.file-upload {
+.file-upload 
+{
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
 }
 
-#fileInput {
+#fileInput 
+{
   margin-bottom: 15px;
 }
 
-#dropArea {
+#dropArea 
+{
   width: 100%;
   border: 2px dashed #3498db;
   border-radius: 5px;
@@ -42,19 +48,22 @@ h1 {
   transition: all 0.3s ease;
 }
 
-#dropArea:hover {
+#dropArea:hover 
+{
   background-color: #f1f1f1;
   border-color: #2980b9;
 }
 
-#imagePreview {
+#imagePreview 
+{
   max-height: 400px;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin: 20px 0;
 }
 
-#result {
+#result 
+{
   background-color: #f9f9f9;
   border: 1px solid #e0e0e0;
   border-radius: 5px;
@@ -63,7 +72,8 @@ h1 {
   overflow-y: auto;
 }
 
-#keywordsList {
+#keywordsList 
+{
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -72,7 +82,8 @@ h1 {
   padding: 0;
 }
 
-#keywordsList li {
+#keywordsList li 
+{
   background-color: #3498db;
   color: white;
   padding: 5px 10px;
@@ -80,7 +91,8 @@ h1 {
   font-size: 0.9em;
 }
 
-button {
+button 
+{
   background-color: #3498db;
   color: white;
   border: none;
@@ -91,33 +103,20 @@ button {
   margin: 10px 0;
 }
 
-button:hover {
+button:hover 
+{
   background-color: #2980b9;
 }
 
-#searchEngine {
+#searchEngine 
+{
   margin: 10px 0;
   padding: 8px;
   width: 200px;
 }
 
-#comparisonTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-#comparisonTable th, #comparisonTable td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
-}
-
-#comparisonTable th {
-  background-color: #f2f2f2;
-}
-
-#loadingMessage {
+#loadingMessage 
+{
   color: #3498db;
   text-align: center;
   font-style: italic;

@@ -53,19 +53,21 @@
         <select id="searchEngine">
           <option value="google">Google</option>
           <option value="yahoo">Yahoo</option>
+          <option value="bing">Bing</option>
         </select>
         <button id="searchButton">Search</button>
       </div>
 
       <!-- Search Comparison Section -->
       <div id="searchComparison" style="display: none">
-        <h2>Search Comparison (Yahoo vs Google)</h2>
+        <h2>Search Comparison (Google vs Yahoo vs Bing)</h2>
         <table id="comparisonTable">
           <thead>
             <tr>
               <th>Criteria</th>
               <th>Google</th>
               <th>Yahoo</th>
+              <th>Bing</th>
             </tr>
           </thead>
           <tbody>
@@ -73,26 +75,31 @@
               <td>Speed</td>
               <td id="googleSpeed"></td>
               <td id="yahooSpeed"></td>
+              <td id="bingSpeed"></td>
             </tr>
             <tr>
               <td>Relevance</td>
               <td id="googleRelevance"></td>
               <td id="yahooRelevance"></td>
+              <td id="bingRelevance"></td>
             </tr>
             <tr>
               <td>Result Count</td>
               <td id="googleCount"></td>
               <td id="yahooCount"></td>
+              <td id="bingCount"></td>
             </tr>
             <tr>
               <td>Ads Presence</td>
               <td id="googleAds"></td>
               <td id="yahooAds"></td>
+              <td id="bingAds"></td>
             </tr>
             <tr>
               <td>Usability</td>
               <td id="googleUsability"></td>
               <td id="yahooUsability"></td>
+              <td id="bingUsability"></td>
             </tr>
           </tbody>
         </table>
