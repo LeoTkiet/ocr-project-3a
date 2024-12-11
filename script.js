@@ -106,43 +106,62 @@ async function processImageFromFile(file)
   };
   reader.readAsDataURL(file);
 
-  Tesseract.recognize(file, "eng+vie", { logger: (info) => console.log(info) })
+  Tesseract.recognize(file, "eng+vie+fra+deu+spa+rus+jpn+kor+chi_sim+chi_tra+ita+por", 
+  {
+    logger: (info) => console.log(info),
+    // Chỉ định whitelist các ký tự cần nhận diện (bao gồm ký tự đặc biệt)
+    tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%^&*()[]{}<>!?,.-_=+|/:;',
+  })
     .then(async ({ data: { text } }) => 
     {
+      // Hiển thị kết quả OCR
       resultElement.textContent = text;
       extractedTextPrompt.style.display = "block";
       downloadButton.style.display = "block";
       copyButton.style.display = "block";
       loadingMessage.style.display = "none";
-
+  
+      // Tính toán từ khóa dựa trên TF-IDF
       const keywords = await extractKeywordsWithTfIdf(text);
       keywordsList.innerHTML = "";
-
+  
       keywords.forEach((keyword) => 
       {
         const listItem = document.createElement("li");
         listItem.textContent = keyword.word;
         keywordsList.appendChild(listItem);
       });
-
+  
+      // Hiển thị từ khóa và các tùy chọn tìm kiếm
       keywordsPrompt.style.display = "block";
       searchOptionsPrompt.style.display = "block";
     })
     .catch((error) => 
     {
+      // Hiển thị lỗi nếu quá trình OCR thất bại
       resultElement.textContent = "Lỗi xử lý hình ảnh: " + error.message;
       loadingMessage.style.display = "none";
     });
 }
-
-// Copy nội dung
-document.getElementById("copyButton").addEventListener("click", () => 
-{
+document.getElementById("copyButton").addEventListener("click", () => {
   const resultText = document.getElementById("result").textContent;
+
+  // Sao chép văn bản vào clipboard
   navigator.clipboard
     .writeText(resultText)
-    .then(() => alert("Text copied to clipboard!"))
-    .catch((err) => alert("Failed to copy text: ", err));
+    .then(() => {
+      // Hiển thị thông báo
+      const notice = document.getElementById("noticeCopiedText");
+      notice.style.display = "block"; // Hiển thị div
+      
+      // Tự động ẩn sau 3 giây
+      setTimeout(() => {
+        notice.style.display = "none";
+      }, 3000);
+    })
+    .catch((err) => {
+      alert("Failed to copy text: ", err);
+    });
 });
 
 // Tìm kiếm với từ khóa
